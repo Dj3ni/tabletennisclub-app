@@ -18,11 +18,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
 class InterclubController extends Controller
 {
-    protected $interclubService;
+    protected InterclubService $interclubService;
 
     public function __construct(InterclubService $interclubService)
     {
@@ -36,7 +36,7 @@ class InterclubController extends Controller
          *  - not selected in other team already
          *  - match not in the past
          *  - player is competitor
-         *  - player is allow to play (list force check)
+         *  - player is allowed to play (list force check)
          */
         $userSelected = $user->interclubs()->sync([
             $interclub->id => ['is_selected' => true],
@@ -64,9 +64,9 @@ class InterclubController extends Controller
         $otherClubs = Club::OtherClubs()->orderBy('name')->get();
         $user = Auth::user();
         $teams = ($user->is_admin || $user->is_committee_member)
-            ? $teams = Team::where('club_id', $club->id)->get()
-            : $teams = Team::where('captain_id', $user->id)->get();
-        $rooms = Room::select('id', 'name')
+            ? Team::where('club_id', $club->id)->get()
+            : Team::where('captain_id', $user->id)->get();
+        $rooms = Room::select(['id', 'name'])
             ->where('capacity_for_interclubs', '>', 0)
             ->get();
 
@@ -105,7 +105,7 @@ class InterclubController extends Controller
             ->matches()
             ->toArray();
 
-        $interclubs = Interclub::orderBy('start_date_time', 'asc')->paginate(10);
+        $interclubs = Interclub::orderBy('start_date_time')->paginate(10);
 
         return view('admin.interclubs.index', [
             'interclubs' => $interclubs,
@@ -118,7 +118,7 @@ class InterclubController extends Controller
      */
     public function show(Interclub $interclub): View
     {
-        $this->authorize('view', Auth::user(), Interclub::class);
+        $this->authorize('view', [Auth::user(), Interclub::class]);
 
         $breadcrumbs = Breadcrumb::make()
             ->home()
@@ -129,17 +129,17 @@ class InterclubController extends Controller
         $selectedUsers = $interclub
             ->users()
             ->wherePivot('is_selected', true)
-            ->orderBy('last_name', 'asc')
-            ->orderby('first_name', 'asc')
+            ->orderBy('last_name')
+            ->orderby('first_name')
             ->get();
 
         $subscribedUsers = $interclub
             ->users()
             ->wherePivot('is_subscribed', true)
             ->wherePivot('is_selected', false)
-            ->orWherePivot('is_selected', null)
-            ->orderBy('last_name', 'asc')
-            ->orderby('first_name', 'asc')
+            ->orWherePivot('is_selected')
+            ->orderBy('last_name')
+            ->orderby('first_name')
             ->get();
 
         $users = User::where('is_competitor', true)
@@ -151,7 +151,7 @@ class InterclubController extends Controller
             })
             ->get();
 
-        return View('admin.interclubs.show', [
+        return view('admin.interclubs.show', [
             'interclub' => $interclub,
             'selectedUsers' => $selectedUsers,
             'subscribedUsers' => $subscribedUsers,
@@ -170,7 +170,7 @@ class InterclubController extends Controller
 
         $interclubs = Interclub::all();
 
-        return View('admin.interclubs.selections', [
+        return view('admin.interclubs.selections', [
             'interclubs' => $interclubs,
             'breadcrumbs' => $breadcrumbs,
         ]);
@@ -203,6 +203,7 @@ class InterclubController extends Controller
 
     public function toggleSelection(Interclub $interclub, User $user): RedirectResponse
     {
+        /** @var Interclub|null $userWithPivot */
         $userWithPivot = $user->interclubs()->where('interclub_id', $interclub->id)->first();
 
         // if (!isset($userWithPivot->registration->is_selected)) {
@@ -224,6 +225,6 @@ class InterclubController extends Controller
      */
     public function update(Request $request, Interclub $interclub)
     {
-        //
+        // To do
     }
 }
