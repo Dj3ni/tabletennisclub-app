@@ -744,5 +744,9 @@
     "Something went wrong while sending your email" : "Erreur lors de l'envoi de l'email",
     "Email successfully sent" : "Email envoyé",
     "Contact details" : "Détails du contact",
-    "Seasons" : "Saisons"
+    "Seasons" : "Saisons",
+    "EventPosts" : "Événements",
+    "Interclubs" : "Interclubs",
+    "Training Packs" : "Packs d'entraînements",
+    "Subscriptions" : "Cotisations"
 }

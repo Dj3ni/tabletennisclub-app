@@ -7,35 +7,124 @@ use App\Support\Breadcrumb;
 use Illuminate\Support\Facades\Route;
 
 describe('Breadcrumb', function (): void {
-    it('can be instantiated using make method', function (): void {
-        $breadcrumb = Breadcrumb::make();
+    describe('Instance tests', function () {
+        it('can be instantiated using make method', function (): void {
+            $breadcrumb = Breadcrumb::make();
 
-        expect($breadcrumb)->toBeInstanceOf(Breadcrumb::class);
+            expect($breadcrumb)->toBeInstanceOf(Breadcrumb::class);
+        });
+
+        it('starts with empty items array', function (): void {
+            $breadcrumb = Breadcrumb::make();
+
+            expect($breadcrumb->toArray())->toBe([]);
+        });
     });
 
-    it('starts with empty items array', function (): void {
-        $breadcrumb = Breadcrumb::make();
+    // ─────────────────────────────────────────────────────────────
+    // Features methods
+    // ─────────────────────────────────────────────────────────────
 
-        expect($breadcrumb->toArray())->toBe([]);
+    describe('Dataset breadcrumb and url structure', function (): void {
+        it('allows overriding default URLs in predefined methods', function (string $method_name) {
+
+            $url = '/custom-url';
+            $items = Breadcrumb::make()->$method_name($url)->toArray();
+            expect($items[0]['url'])->toBe($url);
+
+        })->with([
+            ['home'],
+            ['contacts'],
+            ['eventPosts'],
+            ['newsPosts'],
+            ['profile'],
+            ['rooms'],
+            ['tables'],
+            ['teams'],
+            ['tournaments'],
+            ['seasons'],
+            ['subscriptions'],
+            ['trainings'],
+            ['trainingPacks'],
+            ['users'],
+        ]);
+
+        it('adds the correct structure for predefined methods', function (string $method, string $routeName, ?string $icon = null) {
+            Route::get("/test-{$method}", fn () => 'ok')->name($routeName);
+
+            $items = Breadcrumb::make()->{$method}()->toArray();
+
+            expect($items[0])->toHaveKeys(['title', 'url', 'icon'])
+                ->and($items[0]['url'])->toContain(route($routeName))
+                ->and($items[0]['icon'])->toBe($icon);
+        })->with([
+            // [ 'method_name', 'route_name', 'icon' ]
+            ['home', 'dashboard', 'home'],
+            ['contacts', 'clubAdmin.contacts.index'],
+            ['eventPosts', 'clubPosts.eventPosts.index', 'home'],
+            ['newsPosts', 'clubPosts.newsPosts.index', 'home'],
+            ['profile', 'profile.edit'],
+            ['rooms', 'rooms.index'],
+            ['tables', 'tables.index'],
+            ['teams', 'teams.index'],
+            ['tournaments', 'tournaments.index'],
+            ['seasons', 'clubEvents.interclubs.seasons.index', 'calendar'],
+            ['subscriptions', 'clubAdmin.subscriptions.index', 'calendar'],
+            ['trainings', 'trainings.index'],
+            ['trainingPacks', 'admin.trainingpacks.index'],
+            ['users', 'users.index'],
+        ]);
+        it('returns self for method chaining', function (string $method): void {
+            $breadcrumb = Breadcrumb::make();
+            $result = $breadcrumb->$method();
+
+            expect($result)->toBe($breadcrumb);
+        })->with([
+            ['home'],
+            ['contacts'],
+            ['eventPosts'],
+            ['newsPosts'],
+            ['profile'],
+            ['rooms'],
+            ['tables'],
+            ['teams'],
+            ['tournaments'],
+            ['seasons'],
+            ['subscriptions'],
+            ['trainings'],
+            ['trainingPacks'],
+            ['users'],
+        ]);
     });
 
     describe('translated methods', function (): void {
-        it('translates breadcrumbs in French', function (string $english, string $french): void {
-            // On force la langue en français pour ce test
+        it('translates breadcrumb titles in French', function (string $method, string $expectedFrench): void {
+
             app()->setLocale('fr_BE');
+            $items = Breadcrumb::make()->{$method}()->toArray();
+            expect($items[0]['title'])->toBe($expectedFrench);
 
-            // Simulation de la route
-            Route::get('/seasons', fn () => 'ok')->name('clubEvents.interclubs.seasons.index');
-
-            $breadcrumb = Breadcrumb::make()->seasons();
-            $items = $breadcrumb->toArray();
-
-            expect($items[0]['title'])->toBe($french);
         })->with([
-            ['Seasons', 'Saisons'],
-
+            // [ 'method_name', 'expected translation' ]
+            ['contacts', 'Contacts'],
+            ['eventPosts', 'Événements'],
+            ['newsPosts', 'Articles'],
+            ['profile', 'Profil'],
+            ['rooms', 'Salles'],
+            ['tables', 'Tables'],
+            ['teams', 'Équipes'],
+            ['tournaments', 'Tournois'],
+            ['seasons', 'Saisons'],
+            ['subscriptions', 'Cotisations'],
+            ['trainings', 'Entraînements'],
+            ['trainingPacks', 'Packs d\'entraînements'],
+            ['users', 'Utilisateurs'],
         ]);
     });
+
+    // ─────────────────────────────────────────────────────────────
+    // Specific methods
+    // ─────────────────────────────────────────────────────────────
 
     describe('add method', function (): void {
 
@@ -45,7 +134,7 @@ describe('Breadcrumb', function (): void {
             $breadcrumb = Breadcrumb::make()->{$method}();
             $items = $breadcrumb->toArray();
 
-            expect($items[0]['title'])->toBe($title)
+            expect($items[0]['title'])->toBe($title === 'Admin' ? $title : __($title))
                 ->and($items[0]['url'])->toContain("/{$routeName}");
         })->with([
             // [Method name, title for Breadcrumb, url contains ]
@@ -106,93 +195,6 @@ describe('Breadcrumb', function (): void {
                 ['title' => 'First', 'url' => '/first', 'icon' => null],
                 ['title' => 'Second', 'url' => '/second', 'icon' => null],
             ]);
-        });
-    });
-
-    describe('home method', function (): void {
-        it('adds home breadcrumb with default route', function (): void {
-            Route::get('/dashboard', fn () => 'dashboard')->name('dashboard');
-
-            $breadcrumb = Breadcrumb::make()->home();
-            $items = $breadcrumb->toArray();
-
-            expect($items)->toHaveCount(1)
-                ->and($items[0]['title'])->toBe('Admin')
-                ->and($items[0]['icon'])->toBe('home')
-                ->and($items[0]['url'])->toContain('/dashboard');
-        });
-
-        it('adds home breadcrumb with custom url', function (): void {
-            $breadcrumb = Breadcrumb::make()->home('/custom-home');
-
-            expect($breadcrumb->toArray())->toBe([
-                ['title' => 'Admin', 'url' => '/custom-home', 'icon' => 'home'],
-            ]);
-        });
-
-        it('returns self for method chaining', function (): void {
-            $breadcrumb = Breadcrumb::make();
-            $result = $breadcrumb->home();
-
-            expect($result)->toBe($breadcrumb);
-        });
-    });
-
-    describe('tournaments method', function (): void {
-        it('adds tournaments breadcrumb with default route', function (): void {
-            Route::get('/tournaments', fn () => 'tournaments')->name('tournaments.index');
-
-            $breadcrumb = Breadcrumb::make()->tournaments();
-            $items = $breadcrumb->toArray();
-
-            expect($items)->toHaveCount(1)
-                ->and($items[0]['title'])->toBe('Tournaments')
-                ->and($items[0]['icon'])->toBeNull()
-                ->and($items[0]['url'])->toContain('/tournaments');
-        });
-
-        it('adds tournaments breadcrumb with custom url', function (): void {
-            $breadcrumb = Breadcrumb::make()->tournaments('/custom-tournaments');
-
-            expect($breadcrumb->toArray())->toBe([
-                ['title' => 'Tournaments', 'url' => '/custom-tournaments', 'icon' => null],
-            ]);
-        });
-
-        it('returns self for method chaining', function (): void {
-            $breadcrumb = Breadcrumb::make();
-            $result = $breadcrumb->tournaments();
-
-            expect($result)->toBe($breadcrumb);
-        });
-    });
-
-    describe('users method', function (): void {
-        it('adds users breadcrumb with default route', function (): void {
-            Route::get('/users', fn () => 'users')->name('users.index');
-
-            $breadcrumb = Breadcrumb::make()->users();
-            $items = $breadcrumb->toArray();
-
-            expect($items)->toHaveCount(1)
-                ->and($items[0]['title'])->toBe('Users')
-                ->and($items[0]['icon'])->toBeNull()
-                ->and($items[0]['url'])->toContain('/users');
-        });
-
-        it('adds users breadcrumb with custom url', function (): void {
-            $breadcrumb = Breadcrumb::make()->users('/custom-users');
-
-            expect($breadcrumb->toArray())->toBe([
-                ['title' => 'Users', 'url' => '/custom-users', 'icon' => null],
-            ]);
-        });
-
-        it('returns self for method chaining', function (): void {
-            $breadcrumb = Breadcrumb::make();
-            $result = $breadcrumb->users();
-
-            expect($result)->toBe($breadcrumb);
         });
     });
 
@@ -262,7 +264,7 @@ describe('Breadcrumb', function (): void {
             expect($items)->toHaveCount(4)
                 ->and($items[0]['title'])->toBe('Admin')
                 ->and($items[0]['icon'])->toBe('home')
-                ->and($items[1]['title'])->toBe('Tournaments')
+                ->and($items[1]['title'])->toBe(__('Tournaments'))
                 ->and($items[2]['title'])->toBe('World Cup 2024')
                 ->and($items[2]['url'])->toContain('/tournaments/' . $tournament->id)
                 ->and($items[3]['title'])->toBe('Edit')
@@ -282,7 +284,7 @@ describe('Breadcrumb', function (): void {
 
             expect($items)->toHaveCount(3)
                 ->and($items[0]['title'])->toBe('Admin')
-                ->and($items[1]['title'])->toBe('Users')
+                ->and($items[1]['title'])->toBe(__('Users'))
                 ->and($items[2]['title'])->toBe('Create User')
                 ->and($items[2]['url'])->toBeNull();
         });
@@ -293,7 +295,7 @@ describe('Breadcrumb', function (): void {
             $breadcrumb = Breadcrumb::make()
                 ->home()
                 ->add('Settings', '/settings', 'cog')
-                ->current('Profile');
+                ->current('Profil');
 
             $items = $breadcrumb->toArray();
 
@@ -302,7 +304,7 @@ describe('Breadcrumb', function (): void {
                 ->and($items[1]['title'])->toBe('Settings')
                 ->and($items[1]['url'])->toBe('/settings')
                 ->and($items[1]['icon'])->toBe('cog')
-                ->and($items[2]['title'])->toBe('Profile')
+                ->and($items[2]['title'])->toBe(__('Profile'))
                 ->and($items[2]['url'])->toBeNull();
         });
     });
