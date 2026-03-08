@@ -180,7 +180,8 @@ Route::post('clubEvents/interclubs/subscribe', [
     ->middleware(['auth', 'verified'])
     ->name('interclubs.subscription');
 
-Route::resource('clubEvents/interclubs', InterclubController::class)->middleware(['auth', 'verified']);
+Route::resource('clubEvents/interclubs', InterclubController::class)
+    ->middleware(['auth', 'verified']);
 
 Route::post('/clubEvents/interclub/add/{interclub}/{user}', [
     InterclubController::class,

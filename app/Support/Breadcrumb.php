@@ -47,9 +47,9 @@ class Breadcrumb
         return $this->add(__('Interclubs'), $url ?: route('interclubs.index'), 'home');
     }
 
-    public function newsPosts(?string $url = null): static
+    public function matches(?string $url = null): static
     {
-        return $this->add(__('NewsPosts'), $url ?: route('clubPosts.newsPosts.index'), 'home');
+        return $this->add(__('Matches'), $url ?: route('interclubs.index'), 'home');
     }
 
     public function profile(?string $url = null): static
