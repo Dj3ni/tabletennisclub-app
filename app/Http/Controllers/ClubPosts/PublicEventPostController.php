@@ -27,7 +27,7 @@ class PublicEventPostController extends Controller
                 // Transformer pour correspondre au format attendu par la vue publique
                 return [
                     'id' => $event->id,
-                    'category' => $event->category,
+                    'type' => $event->category,
                     'title' => $event->title,
                     'description' => $event->description,
                     'date' => $event->formatted_date,

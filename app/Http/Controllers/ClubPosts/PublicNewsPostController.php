@@ -32,7 +32,7 @@ class PublicNewsPostController extends Controller
         return view('public.articles.show', compact('article', 'relatedArticles'));
     }
 
-    private function getFullArticleContent(string $slug): ?array
+    private function getFullArticleContent(string $slug): string
     {
         // Contenu d'exemple - à remplacer par le vrai contenu depuis la base de données
         $contents = [

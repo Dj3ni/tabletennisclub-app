@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\ClubPosts;
 
 use App\Enums\ClubEventTypeEnum;
-use App\Enums\EventPostStatusEnum;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,7 +77,7 @@ class EventPost extends Model
 
     public function getCategoryBadgeClasses(): string
     {
-        return match ($this->category) {
+        return match ($this->type) {
             'club-life' => 'bg-blue-100 text-blue-800',
             'tournament' => 'bg-orange-100 text-orange-800',
             'training' => 'bg-purple-100 text-purple-800',
@@ -89,7 +88,7 @@ class EventPost extends Model
     // Accesseurs pour améliorer l'affichage
     public function getCategoryLabelAttribute(): string
     {
-        return self::CATEGORIES[$this->category] ?? $this->category;
+        return self::CATEGORIES[$this->type] ?? $this->type;
     }
 
     public function getFormattedDateAttribute(): string

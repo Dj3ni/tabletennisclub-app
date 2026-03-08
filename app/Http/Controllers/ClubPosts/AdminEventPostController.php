@@ -27,7 +27,7 @@ class AdminEventPostController extends Controller
         $this->authorize('create', EventPost::class);
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->events()
+            ->eventPosts()
             ->current(__('New event'))
             ->toArray();
 
@@ -66,7 +66,7 @@ class AdminEventPostController extends Controller
         $this->authorize('update', $eventPost);
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->events()
+            ->eventPosts()
             ->add($eventPost->title, route('clubPosts.eventPosts.show', $eventPost))
             ->current(__('Edit'))
             ->toArray();
@@ -115,7 +115,7 @@ class AdminEventPostController extends Controller
 
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->events()
+            ->eventPosts()
             ->toArray();
 
         return view('clubPosts.eventPosts.index', compact('events', 'stats', 'breadcrumbs'));
@@ -134,7 +134,7 @@ class AdminEventPostController extends Controller
     {
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->events()
+            ->eventPosts()
             ->current($eventPost->title)
             ->toArray();
 
@@ -157,7 +157,7 @@ class AdminEventPostController extends Controller
                 // Transformer pour correspondre au format attendu par la vue publique
                 return [
                     'id' => $event->id,
-                    'category' => $event->category,
+                    'type' => $event->category,
                     'title' => $event->title,
                     'description' => $event->description,
                     'date' => $event->formatted_date,

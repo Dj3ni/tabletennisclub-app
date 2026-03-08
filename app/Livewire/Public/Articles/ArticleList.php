@@ -63,7 +63,7 @@ class ArticleList extends Component
             ->count();
     }
 
-    public function getArticlesProperty(): LengthAwarePaginator
+    public function getNewsPostsProperty(): LengthAwarePaginator
     {
         $query = NewsPost::query()
             ->where('status', NewsPostStatusEnum::PUBLISHED->value);
@@ -86,8 +86,8 @@ class ArticleList extends Component
     public function render()
     {
         return view('livewire.public.articles.articles-list', [
-            'articles' => $this->articles,
-            'clubPosts' => $this->articles,
+            'articles' => $this->newsPosts,
+            'clubPosts' => $this->newsPosts,
             'categories' => $this->categories,
             'years' => $this->years,
             'months' => $this->months,

@@ -13,7 +13,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -67,7 +66,7 @@ class AdminNewsPostController extends Controller
     {
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->articles()
+            ->newsPosts()
             ->current(__('Create'))
             ->toArray();
 
@@ -128,7 +127,7 @@ class AdminNewsPostController extends Controller
     {
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->articles()
+            ->newsPosts()
             ->add($article->title, route('clubPosts.newsPosts.edit', $article))
             ->current(__('Edit'))
             ->toArray();
@@ -173,7 +172,7 @@ class AdminNewsPostController extends Controller
 
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->articles()
+            ->newsPosts()
             ->toArray();
 
         return view('clubPosts.newsPosts.index', compact('articles', 'stats', 'breadcrumbs'));
@@ -213,7 +212,7 @@ class AdminNewsPostController extends Controller
 
         $breadcrumbs = Breadcrumb::make()
             ->home()
-            ->articles()
+            ->newsPosts()
             ->add($article->title)
             ->toArray();
 
