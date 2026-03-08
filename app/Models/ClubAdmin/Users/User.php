@@ -129,7 +129,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
         'first_name' => 'string',
         'last_name' => 'string',
-        'sex' => Gender::class,
+        'gender' => Gender::class,
         'phone_number' => 'string',
         'birthdate' => 'datetime:d-m-Y',
         'street' => 'string',
@@ -162,9 +162,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'phone_number',
         'ranking',
-        'sex',
+        'gender',
         'street',
         'avatar_url',
+        'club_id',
     ];
 
     /**

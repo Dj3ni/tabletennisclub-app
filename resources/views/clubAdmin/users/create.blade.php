@@ -17,7 +17,7 @@
                         </svg>
                         {{ __('Dashboard') }}
                     </a>
-                    
+
                     <a href="{{ route('users.index') }}"
                        class="bg-club-yellow hover:bg-club-yellow-light text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors text-sm sm:text-base w-full sm:w-auto text-center flex items-center justify-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,10 +69,10 @@
                 <!-- Formulaire -->
                 <form action="{{ route('users.store') }}" method="POST" class="space-y-6">
                     @csrf
-                    
+
                     <!-- Composant formulaire utilisateur -->
                     <div class="grid grid-cols-1 gap-6">
-                        <x-forms.user :user="$user" :rankings="$rankings" :teams="$teams" :sexes="$sexes"></x-forms.user>
+                        <x-forms.user :user="$user" :rankings="$rankings" :teams="$teams" :genders="$genders"></x-forms.user>
                     </div>
 
                     <!-- Actions du formulaire -->
@@ -85,13 +85,13 @@
                                 {{ __('All fields marked with * are required') }}
                             </span>
                         </div>
-                        
+
                         <div class="flex space-x-3">
                             <a href="{{ route('users.index') }}"
                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-medium transition-colors text-sm">
                                 {{ __('Cancel') }}
                             </a>
-                            
+
                             <button type="submit"
                                     class="bg-club-blue hover:bg-club-blue-light text-white px-6 py-2 rounded-lg font-medium transition-colors text-sm flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

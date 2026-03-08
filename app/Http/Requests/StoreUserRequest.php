@@ -6,8 +6,10 @@ namespace App\Http\Requests;
 
 use App\Enums\Gender;
 use App\Enums\Ranking;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class StoreUserRequest extends FormRequest
 {
@@ -32,7 +34,7 @@ class StoreUserRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -50,7 +52,7 @@ class StoreUserRequest extends FormRequest
             'is_competitor' => ['boolean'],
             'last_name' => ['required', 'string', 'max:255'],
             'licence' => ['nullable', 'required_if:is_competitor,true', 'unique:users,licence', 'size:6'],
-            // 'password' => ['required', 'confirmed', 'min:8', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
+            'password' => ['required', 'confirmed', 'min:8', Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
             'phone_number' => ['nullable', 'string', 'digits_between:9,20'],
             'ranking' => [
                 'nullable',

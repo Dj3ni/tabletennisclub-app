@@ -10,8 +10,8 @@ use App\Enums\Ranking;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\ClubEvents\Interclub\Season;
 use App\Models\ClubAdmin\Users\User;
+use App\Models\ClubEvents\Interclub\Season;
 use App\Models\ClubEvents\Interclub\Team;
 use App\Services\ForceList;
 use App\Support\Breadcrumb;
@@ -44,7 +44,7 @@ class UserController extends Controller
             'user' => new User,
             'teams' => Team::with('league')->get(),
             'rankings' => collect(Ranking::cases())->pluck('name')->toArray(),
-            'sexes' => collect(Gender::cases())->pluck('name')->toArray(),
+            'genders' => collect(Gender::cases())->pluck('name')->toArray(),
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
@@ -65,7 +65,7 @@ class UserController extends Controller
         $this->authorize('delete', $user);
 
         if ($user->tournaments()->whereIn('status', ['draft', 'open', 'pending'])->count() > 0) {
-            $personalPronoun = $user->sex === Gender::WOMEN->name
+            $personalPronoun = $user->gender === Gender::WOMEN->name
                 ? 'she'
                 : 'he';
 
@@ -101,7 +101,7 @@ class UserController extends Controller
             'user' => $user,
             'teams' => Team::all(),
             'rankings' => array_column(Ranking::cases(), 'name'),
-            'sexes' => array_column(Gender::cases(), 'name'),
+            'genders' => array_column(Gender::cases(), 'name'),
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
@@ -139,10 +139,10 @@ class UserController extends Controller
                 ->where('birthdate', '>', now()->subYears(18))
                 ->count(),
             'totalWomen' => User::isActive()
-                ->where('sex', Gender::WOMEN)
+                ->where('gender', Gender::WOMEN)
                 ->count(),
             'totalMen' => User::isActive()
-                ->where('sex', Gender::MEN)
+                ->where('gender', Gender::MEN)
                 ->count(),
             'totalVeterans' => User::isActive()
                 ->isCompetitor()

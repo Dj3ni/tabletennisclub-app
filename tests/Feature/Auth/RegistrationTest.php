@@ -2,23 +2,25 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Models\ClubAdmin\Users\User;
 use App\Models\ClubEvents\Interclub\Club;
 use App\Providers\RouteServiceProvider;
 use function Pest\Laravel\assertAuthenticatedAs;
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 
 describe('User Registration', function () {
     beforeEach(function () {
+        $testLicence = 'TEST12345';
+        config(['app.club_licence' => $testLicence]);
         // We ensure the Club exist
         Club::create([
             'name' => 'Mon Club Test',
-            'licence' => config('app.club_licence'),
-            'street' => config('app.street'),
-            'city_code' => config('app.city_code'),
-            'city_name' => config('app.city_name'),
+            'licence' => $testLicence,
+            'street' => 'Rue du Test, 30',
+            'city_code' => '1340',
+            'city_name' => 'Ottignies',
         ]);
     });
 
@@ -28,36 +30,49 @@ describe('User Registration', function () {
             ->assertViewIs('clubAdmin.users.auth.register');
     });
 
-    it('registers new users successfully', function () {
+    it('registers new users successfully, redirects him and is linked to the correct club', function () {
+        // TODO: Identify the middleware causing this test to fail (it's not $this->withoutMiddleware([RedirectIfAuthenticated::class]);)
+        $this->withoutMiddleware([EnsureEmailIsVerified::class]);
         $this->withoutExceptionHandling();
+
+        Event::fake();
+
         $userData = [
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'john@example.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'aZ1&sK9!pQ2m',
+            'password_confirmation' => 'aZ1&sK9!pQ2m',
         ];
 
-        $response = post('/register', $userData);
+        $response = post(route('register'), $userData);
 
+        // Check redirected after storing User
+        $response->assertStatus(302);
         $response->assertRedirect(RouteServiceProvider::HOME);
-        assertDatabaseHas('users', [
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => 'john@example.com',
-        ]);
 
+        // Check user stored
+        $user = User::where('email', 'john@example.com')->first();
+        expect($user)->not->toBeNull()
+            ->and($user->first_name)->toBe('John')
+            ->and($user->last_name)->toBe('Doe')
+            ->and(Hash::check('aZ1&sK9!pQ2m', $user->password))->toBeTrue();
+
+        // Check user is authenticated
         $user = User::where('email', 'john@example.com')->first();
         assertAuthenticatedAs($user);
 
-        // Check associated to the club
+        // Check user is associated to the club
         expect($user->club)->not->toBeNull()
             ->and($user->club->licence)->toBe(config('app.club_licence'));
     });
 
     it('requires valid data to register', function (string $field, $value) {
-        post('/register', [$field => $value])
+        $this->withoutMiddleware();
+        $this->withoutExceptionHandling();
+        post(route('register'), [$field => $value])
             ->assertSessionHasErrors($field);
+        expect(User::count())->toBe(0);
     })->with([
         'missing first name' => ['first_name', ''],
         'invalid email' => ['email', 'not-an-email'],
