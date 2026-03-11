@@ -7,6 +7,7 @@ namespace App\Models\ClubEvents\Interclub;
 use App\Enums\LeagueCategory;
 use App\Models\ClubAdmin\Club\Room;
 use App\Models\ClubAdmin\Users\User;
+use App\Models\ClubEvents\Game;
 use Carbon\Carbon;
 use Database\Factories\ClubEvents\Interclub\InterclubFactory;
 use Eloquent;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @property int $id
@@ -147,5 +149,10 @@ class Interclub extends Model
     public function visitingTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'visiting_team_id');
+    }
+
+    public function matches(): MorphMany
+    {
+        return $this->morphMany(Game::class, 'source');
     }
 }

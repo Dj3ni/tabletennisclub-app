@@ -10,6 +10,7 @@ use App\Events\Tournament\NewTournamentPublished;
 use App\Models\ClubAdmin\Club\Room;
 use App\Models\ClubAdmin\Club\Table;
 use App\Models\ClubAdmin\Users\User;
+use App\Models\ClubEvents\Game;
 use App\Observers\TournamentObserver;
 use Database\Factories\ClubEvents\Tournament\TournamentFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -145,5 +147,10 @@ class Tournament extends Model
         return $this->belongsToMany(User::class)
             ->withPivot(['has_paid', 'matches_won', 'sets_won', 'points_won'])
             ->withTimestamps();
+    }
+
+    public function games(): MorphMany
+    {
+        return $this->morphMany(Game::class, 'source');
     }
 }

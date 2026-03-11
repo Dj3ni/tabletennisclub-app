@@ -8,6 +8,7 @@ use App\Services\ForceList;
 use App\Services\InterclubService;
 use App\Services\TrainingBuilder;
 use App\Services\TrainingDateGenerator;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,8 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
         Paginator::defaultView('custom-paginate');
+        Relation::enforceMorphMap([
+            'interclub' => 'App\Models\ClubEvents\Interclub\Interclub',
+            'tournament' => 'App\Models\ClubEvents\Tournament\Tournament',
+        ]);
     }
 
     /**
