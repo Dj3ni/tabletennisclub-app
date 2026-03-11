@@ -745,6 +745,8 @@
     "Email successfully sent" : "Email envoyé",
     "Contact details" : "Détails du contact",
     "Ready" : "Prêt",
-    "Paused" : "En pause"
+    "Paused" : "En pause",
+    "A team mus contain at least one player" : "Une équipe doit avoir au moins un joueur",
+    "The ranking [{$rank}] is not valid" : "Le classement [{$rank}] n'est pas valide"
 
 }
