@@ -31,7 +31,7 @@ class HandicapPointsService
             return 0;
         }
 
-        // Règle AFTT : 1 point de handicap par tranche de 2 niveaux d'écart
+        // Rule AFTT : 1 handicap point / 2 ranks diff
         return min(8, (int) ceil($diff / 2));
     }
 
@@ -48,7 +48,7 @@ class HandicapPointsService
             $totalPower += self::RANKING_POWER[$rank];
         }
 
-        // Pour un simple, divise par 1. Pour un double, divise par 2.
+        // For simple, /1 and for doubles /2
         return $totalPower / count($players);
     }
 }

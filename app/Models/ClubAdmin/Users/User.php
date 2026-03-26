@@ -8,6 +8,7 @@ namespace App\Models\ClubAdmin\Users;
 
 use App\Enums\Gender;
 use App\Models\ClubAdmin\Subscription\Subscription;
+use App\Models\ClubEvents\GameParticipant;
 use App\Models\ClubEvents\Interclub\Club;
 use App\Models\ClubEvents\Interclub\Interclub;
 use App\Models\ClubEvents\Interclub\Season;
@@ -357,5 +358,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function trainings(): BelongsToMany
     {
         return $this->belongsToMany(Training::class);
+    }
+
+    public function games(): HasMany
+    {
+        return $this->HasMany(GameParticipant::class);
     }
 }

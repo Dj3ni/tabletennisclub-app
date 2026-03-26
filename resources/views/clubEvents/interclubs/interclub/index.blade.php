@@ -17,6 +17,9 @@
                 <form action="{{ route('interclubs.selections') }}" method="GET">
                     <x-primary-button>{{ __('Make selections') }}</x-primary-button>
                 </form>
+                <form action="{{ route('interclubs.results') }}" method="GET">
+                    <x-primary-button>{{ __('Encode results') }}</x-primary-button>
+                </form>
             </div>
 
             @if (session('success'))

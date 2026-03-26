@@ -747,6 +747,7 @@
     "Ready" : "Prêt",
     "Paused" : "En pause",
     "A team mus contain at least one player" : "Une équipe doit avoir au moins un joueur",
-    "The ranking [{$rank}] is not valid" : "Le classement [{$rank}] n'est pas valide"
+    "The ranking [{$rank}] is not valid" : "Le classement [{$rank}] n'est pas valide",
+    "Corrected" : "Corrigé"
 
 }

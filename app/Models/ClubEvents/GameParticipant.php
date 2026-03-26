@@ -2,7 +2,9 @@
 
 namespace App\Models\ClubEvents;
 
+use App\Models\ClubAdmin\Users\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GameParticipant extends Model
 {
@@ -19,4 +21,14 @@ class GameParticipant extends Model
         'side',
         'handicap_points',
     ];
+
+    public function game(): BelongsTo
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function player(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -17,27 +17,27 @@ use App\Http\Controllers\ClubAdmin\Contact\ContactAdminController;
 use App\Http\Controllers\ClubAdmin\Contact\ContactController;
 use App\Http\Controllers\ClubAdmin\Contact\InvitationController;
 use App\Http\Controllers\ClubAdmin\Contact\SpamController;
+use App\Http\Controllers\ClubAdmin\Payment\PaymentController;
+use App\Http\Controllers\ClubAdmin\Payment\TransactionController;
+use App\Http\Controllers\ClubAdmin\Subscription\RegistrationController;
+use App\Http\Controllers\ClubAdmin\Subscription\SubscriptionController;
 use App\Http\Controllers\ClubAdmin\Users\ProfileController;
 use App\Http\Controllers\ClubAdmin\Users\UserController;
 use App\Http\Controllers\ClubEvents\Interclub\InterclubController;
 use App\Http\Controllers\ClubEvents\Interclub\ResultsController;
+use App\Http\Controllers\ClubEvents\Interclub\SeasonController;
 use App\Http\Controllers\ClubEvents\Interclub\TeamController;
 use App\Http\Controllers\ClubEvents\Tournament\ChangeTournamentStatusController;
 use App\Http\Controllers\ClubEvents\Tournament\KnockoutPhaseController;
 use App\Http\Controllers\ClubEvents\Tournament\ToggleHasPaidController;
 use App\Http\Controllers\ClubEvents\Tournament\TournamentController;
 use App\Http\Controllers\ClubEvents\Training\TrainingController;
-use App\Http\Controllers\ClubPosts\AdminNewsPostController;
-use App\Http\Controllers\ClubPosts\PublicNewsPostController;
-use App\Http\Controllers\ClubPosts\AdminEventPostController;
-use App\Http\Controllers\ClubPosts\PublicEventPostController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ClubAdmin\Payment\PaymentController;
-use App\Http\Controllers\ClubAdmin\Subscription\RegistrationController;
-use App\Http\Controllers\ClubEvents\Interclub\SeasonController;
-use App\Http\Controllers\ClubAdmin\Subscription\SubscriptionController;
 use App\Http\Controllers\ClubEvents\Training\TrainingPackController;
-use App\Http\Controllers\ClubAdmin\Payment\TransactionController;
+use App\Http\Controllers\ClubPosts\AdminEventPostController;
+use App\Http\Controllers\ClubPosts\AdminNewsPostController;
+use App\Http\Controllers\ClubPosts\PublicEventPostController;
+use App\Http\Controllers\ClubPosts\PublicNewsPostController;
+use App\Http\Controllers\HomeController;
 use App\Http\Middleware\ProtectAgainstSpam;
 use App\Models\ClubAdmin\Club\Room;
 use App\Models\ClubAdmin\Users\User;
@@ -198,6 +198,11 @@ Route::get('/clubEvents/interclub/selections', [
     InterclubController::class,
     'showSelections',
 ])->name('interclubs.selections');
+
+Route::get('/clubEvents/interclub/results', [
+    InterclubController::class,
+    'results',
+])->name('interclubs.results');
 
 /**
  * Users
